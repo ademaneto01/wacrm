@@ -26,7 +26,7 @@ const quaddro = isQuaddroMode();
 
 export const metadata: Metadata = {
   title: quaddro
-    ? { default: "WhatsApp · Quaddro", template: "%s · Quaddro" }
+    ? { default: "Quaddro Chat", template: "%s · Quaddro Chat" }
     : { default: "wacrm", template: "%s — wacrm" },
   description: quaddro
     ? "Atendimento por WhatsApp do seu negócio na Quaddro."
