@@ -331,7 +331,9 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
               <span className="truncate" title={account.name}>
                 {account.name}
               </span>
-              {accountRole ? (
+              {accountRole && !quaddro ? (
+                // In Quaddro mode the strip shows only the business
+                // name, in full — the role comes from Quaddro anyway.
                 // Always render the chip — owners used to be
                 // invisible here, which made them indistinguishable
                 // from admins at a glance. Now everyone sees their
