@@ -115,6 +115,9 @@ export interface Contact {
   /** WhatsApp username without the leading @. Display only: usernames
    *  are user-changeable, so they must never key a contact. */
   wa_username?: string | null;
+  /** Quaddro `clients.id` this contact mirrors (migration 044). When
+   *  set, name and phone are owned by Quaddro and read-only here. */
+  quaddro_client_id?: string | null;
   name?: string;
   email?: string;
   company?: string;

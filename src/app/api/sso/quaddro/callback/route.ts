@@ -10,13 +10,16 @@
 //   3. `jti` never seen before (replay);
 //   4. provision business account + member user + membership;
 //   5. mint a Supabase session on this response's cookies;
-//   6. 303 to the inbox (or the WhatsApp connect screen).
+//   6. 303 to the inbox (or the WhatsApp connect screen);
+//   7. after the response: refresh the business's patient list into
+//      contacts (src/lib/quaddro/patients.ts) — never delays sign-in.
 //
 // Any failure lands on /sso/quaddro/error with a reason, never on a
 // password form. Logs carry the reason only — no token, no PII.
 // ============================================================
 
 import { cookies } from 'next/headers'
+import { after } from 'next/server'
 import { relativeRedirect } from '@/lib/auth/callback'
 import { isQuaddroMode } from '@/lib/quaddro/config'
 import { getSsoSecret, verifySsoToken } from '@/lib/quaddro/sso-token'
@@ -33,6 +36,7 @@ import {
   mintSessionTokenHash,
   provisionQuaddroMember,
 } from '@/lib/quaddro/provision'
+import { syncQuaddroPatients } from '@/lib/quaddro/patients'
 import { DEFAULT_LANDING, landingPath, ssoFailure, type SsoFailure } from '@/lib/quaddro/sso-flow'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
@@ -84,6 +88,14 @@ export async function POST(request: Request) {
     const supabase = await createClient()
     const { error } = await supabase.auth.verifyOtp({ type: 'email', token_hash: tokenHash })
     if (error) throw error
+
+    after(async () => {
+      try {
+        await syncQuaddroPatients(admin, member.accountId)
+      } catch (err) {
+        console.error('[quaddro-patients] sign-in sync failed:', err instanceof Error ? err.message : 'unknown error')
+      }
+    })
 
     const connected = await hasConnectedWhatsApp(admin, member.accountId)
     return relativeRedirect(landingPath(saved.next, connected))

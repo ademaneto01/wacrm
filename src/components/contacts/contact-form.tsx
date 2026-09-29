@@ -53,6 +53,9 @@ export function ContactForm({
   const isEdit = !!contact;
 
   const [name, setName] = useState('');
+  // A Quaddro patient: name and phone are owned by Quaddro (migration 044)
+  // and edited there; everything else stays editable here.
+  const fromQuaddro = !!contact?.quaddro_client_id;
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [company, setCompany] = useState('');
@@ -166,8 +169,7 @@ export function ContactForm({
         const { error } = await supabase
           .from('contacts')
           .update({
-            name: name.trim() || null,
-            phone: phone.trim(),
+            ...(fromQuaddro ? {} : { name: name.trim() || null, phone: phone.trim() }),
             email: email.trim() || null,
             company: company.trim() || null,
             updated_at: new Date().toISOString(),
@@ -257,6 +259,7 @@ export function ContactForm({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder={t('namePlaceholder')}
+              disabled={fromQuaddro}
               className="bg-muted border-border text-foreground placeholder:text-muted-foreground"
             />
           </div>
@@ -274,6 +277,7 @@ export function ContactForm({
               }}
               onBlur={checkDuplicate}
               placeholder={t('phonePlaceholder')}
+              disabled={fromQuaddro}
               className="bg-muted border-border text-foreground placeholder:text-muted-foreground"
             />
             {dupMatch ? (
@@ -304,7 +308,7 @@ export function ContactForm({
               </div>
             ) : (
               <p className="text-xs text-muted-foreground">
-                {t('phoneHint')}
+                {fromQuaddro ? t('quaddroManaged') : t('phoneHint')}
               </p>
             )}
           </div>

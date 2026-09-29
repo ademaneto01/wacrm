@@ -321,6 +321,11 @@
   },
   "Contacts": {
     "page": {
+      "quaddroSubtitle": "Pacientes de tu negocio en Quaddro. {count, plural, =0 {Ningún paciente con celular.} one {# paciente.} other {# pacientes.}}",
+      "quaddroSyncBtn": "Sincronizar pacientes",
+      "quaddroSynced": "Pacientes sincronizados con Quaddro.",
+      "quaddroSyncFailed": "No se pudo sincronizar con Quaddro ahora. Inténtalo de nuevo en unos instantes.",
+      "quaddroNoPatients": "Aún no hay pacientes con celular. Regístralos en Quaddro y aparecerán aquí.",
       "title": "Contactos",
       "subtitle": "Administra tu lista de contactos. {count} contactos en total.",
       "subtitleZero": "Administra tu lista de contactos.",
@@ -365,6 +370,7 @@
       "toastBulkDeleted": "{count} contactos eliminados"
     },
     "form": {
+      "quaddroManaged": "El nombre y el celular vienen de la ficha del paciente en Quaddro. Edita el paciente allí para cambiarlos.",
       "addTitle": "Agregar contacto",
       "addDesc": "Crea un nuevo contacto. El nombre es obligatorio.",
       "editTitle": "Editar contacto",
@@ -399,6 +405,7 @@
       "phoneNeedsCountryCode": "Incluye el código de país — el número debe empezar con + (p. ej. +5215512345678)"
     },
     "detailView": {
+      "quaddroManaged": "El nombre y el celular vienen de la ficha del paciente en Quaddro. Edita el paciente allí para cambiarlos.",
       "tabs": {
         "details": "Detalles",
         "activity": "Actividad",

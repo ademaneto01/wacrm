@@ -49,6 +49,7 @@ import {
   SlidersHorizontal,
   Filter,
   X,
+  RefreshCw,
 } from 'lucide-react';
 import { ContactForm } from '@/components/contacts/contact-form';
 import { ContactDetailView } from '@/components/contacts/contact-detail-view';
@@ -57,6 +58,7 @@ import { CustomFieldsManager } from '@/components/contacts/custom-fields-manager
 import { useCan } from '@/hooks/use-can';
 import { GatedButton } from '@/components/ui/gated-button';
 import { useTranslations } from 'next-intl';
+import { isQuaddroMode } from '@/lib/quaddro/config';
 
 const PAGE_SIZE = 25;
 
@@ -69,6 +71,11 @@ export default function ContactsPage() {
   const supabase = createClient();
   const canEdit = useCan('send-messages');
   const canEditSettings = useCan('edit-settings');
+  // Quaddro mode: the list is the business's patient list, mirrored from
+  // Quaddro (src/lib/quaddro/patients.ts). Patients are created, renamed
+  // and removed in Quaddro, so add / import / delete are hidden here.
+  const quaddro = isQuaddroMode();
+  const [syncing, setSyncing] = useState(false);
 
   const [contacts, setContacts] = useState<ContactWithTags[]>([]);
   const [loading, setLoading] = useState(true);
@@ -143,6 +150,7 @@ export default function ContactsPage() {
         p_search: term || null,
         p_limit: PAGE_SIZE,
         p_offset: from,
+        ...(quaddro ? { p_quaddro_only: true } : {}),
       });
       if (seq !== fetchSeq.current) return; // superseded by a newer fetch
       if (error) {
@@ -154,11 +162,16 @@ export default function ContactsPage() {
       contactRows = rows.map((r) => r.contact);
       count = rows.length > 0 ? Number(rows[0].total_count) : 0;
     } else {
-      let query = supabase
-        .from('contacts')
-        .select('*', { count: 'exact' })
-        .order('created_at', { ascending: false })
-        .range(from, to);
+      let query = supabase.from('contacts').select('*', { count: 'exact' });
+      query = quaddro
+        ? // Patients arrive in bulk with the same created_at; sort like the
+          // Quaddro client list, with id as the tiebreaker for stable pages.
+          query
+            .not('quaddro_client_id', 'is', null)
+            .order('name', { ascending: true, nullsFirst: false })
+            .order('id', { ascending: true })
+        : query.order('created_at', { ascending: false });
+      query = query.range(from, to);
 
       if (term) {
         const like = `%${term}%`;
@@ -207,7 +220,38 @@ export default function ContactsPage() {
 
     setContacts(enriched);
     setLoading(false);
-  }, [supabase, page, search, selectedTagIds, tagsMap, t]);
+  }, [supabase, page, search, selectedTagIds, tagsMap, t, quaddro]);
+
+  const syncPatients = useCallback(
+    async (force: boolean) => {
+      setSyncing(true);
+      const res = await fetch('/api/quaddro/contacts/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ force }),
+      }).catch(() => null);
+      const outcome = res?.ok
+        ? ((await res.json().catch(() => null)) as {
+            status?: string;
+            counts?: Record<string, number>;
+          } | null)
+        : null;
+      setSyncing(false);
+
+      if (!outcome) {
+        if (force) toast.error(t('quaddroSyncFailed'));
+        return;
+      }
+      const changed =
+        outcome.status === 'synced' &&
+        Object.entries(outcome.counts ?? {}).some(
+          ([key, value]) => key !== 'patients' && value > 0
+        );
+      if (changed) fetchContacts();
+      if (force && outcome.status === 'synced') toast.success(t('quaddroSynced'));
+    },
+    [fetchContacts, t]
+  );
 
   // Load-once-on-mount-ish data fetches. Each setter inside runs
   // inside an async promise completion (Supabase await), not
@@ -222,6 +266,16 @@ export default function ContactsPage() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchContacts();
   }, [fetchContacts]);
+
+  // Refresh the patient mirror once per visit (server-throttled). Only
+  // re-renders the list when the sync actually changed something.
+  const syncedOnMount = useRef(false);
+  useEffect(() => {
+    if (!quaddro || syncedOnMount.current) return;
+    syncedOnMount.current = true;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    syncPatients(false);
+  }, [quaddro, syncPatients]);
 
   function openAddForm() {
     setEditContact(null);
@@ -346,7 +400,11 @@ export default function ContactsPage() {
         <div>
           <h1 className="text-2xl font-bold text-foreground">{t('title')}</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            {totalCount > 0 ? t('subtitle', { count: totalCount }) : t('subtitleZero')}
+            {quaddro
+              ? t('quaddroSubtitle', { count: totalCount })
+              : totalCount > 0
+                ? t('subtitle', { count: totalCount })
+                : t('subtitleZero')}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -360,25 +418,39 @@ export default function ContactsPage() {
               {t('customFieldsBtn')}
             </Button>
           )}
-          <GatedButton
-            variant="outline"
-            canAct={canEdit}
-            gateReason="add or import contacts"
-            onClick={() => setImportOpen(true)}
-            className="border-border text-muted-foreground hover:bg-muted"
-          >
-            <Upload className="size-4" />
-            {t('importBtn')}
-          </GatedButton>
-          <GatedButton
-            canAct={canEdit}
-            gateReason="add or import contacts"
-            onClick={openAddForm}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground"
-          >
-            <Plus className="size-4" />
-            {t('addContactBtn')}
-          </GatedButton>
+          {quaddro ? (
+            <Button
+              variant="outline"
+              onClick={() => syncPatients(true)}
+              disabled={syncing}
+              className="border-border text-muted-foreground hover:bg-muted"
+            >
+              <RefreshCw className={`size-4 ${syncing ? 'animate-spin' : ''}`} />
+              {t('quaddroSyncBtn')}
+            </Button>
+          ) : (
+            <>
+              <GatedButton
+                variant="outline"
+                canAct={canEdit}
+                gateReason="add or import contacts"
+                onClick={() => setImportOpen(true)}
+                className="border-border text-muted-foreground hover:bg-muted"
+              >
+                <Upload className="size-4" />
+                {t('importBtn')}
+              </GatedButton>
+              <GatedButton
+                canAct={canEdit}
+                gateReason="add or import contacts"
+                onClick={openAddForm}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground"
+              >
+                <Plus className="size-4" />
+                {t('addContactBtn')}
+              </GatedButton>
+            </>
+          )}
         </div>
       </div>
 
@@ -499,7 +571,7 @@ export default function ContactsPage() {
       </div>
 
       {/* Bulk action bar */}
-      {selected.size > 0 && (
+      {!quaddro && selected.size > 0 && (
         <div className="flex items-center justify-between gap-4 rounded-lg border border-border bg-muted/40 px-4 py-2">
           <p className="text-sm text-foreground">
             {t('selectedCount', { count: selected.size })}
@@ -532,6 +604,7 @@ export default function ContactsPage() {
         <Table>
           <TableHeader>
             <TableRow className="border-border hover:bg-transparent">
+              {!quaddro && (
               <TableHead className="w-10">
                 <Checkbox
                   checked={allOnPageSelected}
@@ -541,6 +614,7 @@ export default function ContactsPage() {
                   aria-label={t('selectAllOnPage')}
                 />
               </TableHead>
+              )}
               <TableHead className="text-muted-foreground">{t('tableColumns.name')}</TableHead>
               <TableHead className="text-muted-foreground">{t('tableColumns.phone')}</TableHead>
               <TableHead className="text-muted-foreground hidden md:table-cell">{t('tableColumns.email')}</TableHead>
@@ -568,9 +642,11 @@ export default function ContactsPage() {
                     <p className="text-sm text-muted-foreground">
                       {hasActiveFilters
                         ? t('noContactsMatch')
-                        : t('noContactsYet')}
+                        : quaddro
+                          ? t('quaddroNoPatients')
+                          : t('noContactsYet')}
                     </p>
-                    {!hasActiveFilters && (
+                    {!hasActiveFilters && !quaddro && (
                       <GatedButton
                         canAct={canEdit}
                         gateReason="add or import contacts"
@@ -593,6 +669,7 @@ export default function ContactsPage() {
                   className="border-border hover:bg-muted/50 cursor-pointer"
                   onClick={() => openDetail(contact.id)}
                 >
+                  {!quaddro && (
                   <TableCell onClick={(e) => e.stopPropagation()}>
                     <Checkbox
                       checked={selected.has(contact.id)}
@@ -600,6 +677,7 @@ export default function ContactsPage() {
                       aria-label={`Select ${contact.name || contact.phone}`}
                     />
                   </TableCell>
+                  )}
                   <TableCell className="text-foreground font-medium">
                     {contact.name || <span className="text-muted-foreground italic">{t('unnamed')}</span>}
                   </TableCell>
@@ -672,17 +750,21 @@ export default function ContactsPage() {
                           <Pencil className="size-4" />
                           {t('editAction')}
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator className="bg-border" />
-                        <DropdownMenuItem
-                          variant="destructive"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            confirmDelete(contact);
-                          }}
-                        >
-                          <Trash2 className="size-4" />
-                          {t('deleteAction')}
-                        </DropdownMenuItem>
+                        {!quaddro && (
+                          <>
+                            <DropdownMenuSeparator className="bg-border" />
+                            <DropdownMenuItem
+                              variant="destructive"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                confirmDelete(contact);
+                              }}
+                            >
+                              <Trash2 className="size-4" />
+                              {t('deleteAction')}
+                            </DropdownMenuItem>
+                          </>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>

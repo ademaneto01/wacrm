@@ -88,6 +88,17 @@ BEGIN
     RAISE EXCEPTION 'quaddro_provision_member is missing — migration 043 did not apply';
   END IF;
 
+  -- Quaddro patients (044): the contact link column, the sync RPC and
+  -- the tag filter's patients-only overload the contacts page calls.
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'contacts'
+      AND column_name = 'quaddro_client_id'
+  ) OR to_regprocedure('public.quaddro_sync_patients(uuid,jsonb)') IS NULL
+    OR to_regprocedure('public.filter_contacts_by_tags(uuid[],text,integer,integer,boolean)') IS NULL THEN
+    RAISE EXCEPTION 'Quaddro patient sync is missing — migration 044 did not apply';
+  END IF;
+
   RAISE NOTICE 'schema verification passed';
 END
 $$;

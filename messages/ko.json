@@ -321,6 +321,11 @@
   },
   "Contacts": {
     "page": {
+      "quaddroSubtitle": "Quaddro에 등록된 비즈니스의 환자입니다. {count, plural, =0 {휴대폰 번호가 있는 환자가 없습니다.} other {환자 #명.}}",
+      "quaddroSyncBtn": "환자 동기화",
+      "quaddroSynced": "Quaddro와 환자를 동기화했습니다.",
+      "quaddroSyncFailed": "지금은 Quaddro와 동기화할 수 없습니다. 잠시 후 다시 시도하세요.",
+      "quaddroNoPatients": "휴대폰 번호가 있는 환자가 아직 없습니다. Quaddro에서 환자를 등록하면 여기에 표시됩니다.",
       "title": "연락처",
       "subtitle": "연락처 목록을 관리하세요. 전체 연락처 {count}개.",
       "subtitleZero": "연락처 목록을 관리하세요.",
@@ -365,6 +370,7 @@
       "toastBulkDeleted": "연락처 {count}개가 삭제되었습니다"
     },
     "form": {
+      "quaddroManaged": "이름과 휴대폰 번호는 Quaddro의 환자 정보에서 가져옵니다. 변경하려면 Quaddro에서 환자를 수정하세요.",
       "addTitle": "연락처 추가",
       "addDesc": "새 연락처를 만듭니다. 이름은 필수입니다.",
       "editTitle": "연락처 수정",
@@ -399,6 +405,7 @@
       "phoneNeedsCountryCode": "국가 코드를 포함하세요. 번호는 +로 시작해야 합니다 (예: +14155550123)"
     },
     "detailView": {
+      "quaddroManaged": "이름과 휴대폰 번호는 Quaddro의 환자 정보에서 가져옵니다. 변경하려면 Quaddro에서 환자를 수정하세요.",
       "tabs": {
         "details": "상세 정보",
         "activity": "활동",

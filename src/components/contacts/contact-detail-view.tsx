@@ -199,6 +199,9 @@ export function ContactDetailView({
     setTimeout(() => setCopiedPhone(false), 2000);
   }
 
+  // Quaddro patient: name and phone are owned by Quaddro (migration 044).
+  const fromQuaddro = !!contact?.quaddro_client_id;
+
   async function saveDetails() {
     if (!contactId || !editPhone.trim()) {
       toast.error(t('toastPhoneRequired'));
@@ -219,8 +222,7 @@ export function ContactDetailView({
     const { error } = await supabase
       .from('contacts')
       .update({
-        name: editName.trim() || null,
-        phone: editPhone.trim(),
+        ...(fromQuaddro ? {} : { name: editName.trim() || null, phone: editPhone.trim() }),
         email: editEmail.trim() || null,
         company: editCompany.trim() || null,
         updated_at: new Date().toISOString(),
@@ -504,6 +506,7 @@ export function ContactDetailView({
                     <Input
                       value={editName}
                       onChange={(e) => setEditName(e.target.value)}
+                      disabled={fromQuaddro}
                       className="bg-muted border-border text-foreground h-8 text-sm"
                     />
                   </div>
@@ -514,8 +517,12 @@ export function ContactDetailView({
                     <Input
                       value={editPhone}
                       onChange={(e) => setEditPhone(e.target.value)}
+                      disabled={fromQuaddro}
                       className="bg-muted border-border text-foreground h-8 text-sm"
                     />
+                    {fromQuaddro && (
+                      <p className="text-xs text-muted-foreground">{t('quaddroManaged')}</p>
+                    )}
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-muted-foreground text-xs">{t('email')}</Label>

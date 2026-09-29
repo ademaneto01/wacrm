@@ -321,6 +321,11 @@
   },
   "Contacts": {
     "page": {
+      "quaddroSubtitle": "Your business's patients in Quaddro. {count, plural, =0 {No patients with a mobile number.} one {# patient.} other {# patients.}}",
+      "quaddroSyncBtn": "Sync patients",
+      "quaddroSynced": "Patients synced with Quaddro.",
+      "quaddroSyncFailed": "Couldn't sync with Quaddro right now. Try again in a moment.",
+      "quaddroNoPatients": "No patients with a mobile number yet. Add patients in Quaddro and they show up here.",
       "title": "Contacts",
       "subtitle": "Manage your contact list. {count} total contacts.",
       "subtitleZero": "Manage your contact list.",
@@ -365,6 +370,7 @@
       "toastBulkDeleted": "{count} contacts deleted"
     },
     "form": {
+      "quaddroManaged": "Name and mobile number come from the patient record in Quaddro. Edit the patient there to change them.",
       "addTitle": "Add Contact",
       "addDesc": "Create a new contact. Name is required.",
       "editTitle": "Edit Contact",
@@ -399,6 +405,7 @@
       "phoneNeedsCountryCode": "Include the country code — the number must start with + (e.g. +14155550123)"
     },
     "detailView": {
+      "quaddroManaged": "Name and mobile number come from the patient record in Quaddro. Edit the patient there to change them.",
       "tabs": {
         "details": "Details",
         "activity": "Activity",

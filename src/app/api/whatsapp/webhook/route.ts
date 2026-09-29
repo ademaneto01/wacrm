@@ -1249,9 +1249,10 @@ function contactIdentityPatch(
   // falls back to the phone number / BSUID, which is the right choice
   // for a brand-new row but would clobber an agent's hand-edited name
   // on every inbound message from a contact with no WhatsApp profile
-  // name.
+  // name. A Quaddro patient's name is owned by Quaddro (migration 044,
+  // whose trigger would discard the write anyway) — skip it outright.
   const name = identity.name || identity.waUsername
-  if (name && name !== existing.name) patch.name = name
+  if (name && name !== existing.name && !existing.quaddro_client_id) patch.name = name
 
   if (identity.waUserId && identity.waUserId !== existing.wa_user_id) {
     patch.wa_user_id = identity.waUserId
