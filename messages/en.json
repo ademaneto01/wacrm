@@ -18,6 +18,8 @@
   },
   "Sidebar": {
     "title": "CRM Template for WhatsApp",
+    "backToQuaddro": "Back to Quaddro",
+    "quaddroTitle": "WhatsApp",
     "primaryNav": "Primary",
     "dashboard": "Dashboard",
     "inbox": "Inbox",
@@ -2061,5 +2063,19 @@
   },
   "DashboardShell": {
     "loading": "Loading..."
+  },
+  "QuaddroSso": {
+    "errorTitle": "We couldn't open WhatsApp",
+    "retry": "Try again",
+    "connectTitle": "Connect your WhatsApp",
+    "connectDescription": "Link your business WhatsApp number to start answering your clients here. Once it is connected, your conversations show up in the Inbox.",
+    "errors": {
+      "not_configured": "The WhatsApp module isn't set up yet. Please contact Quaddro support.",
+      "invalid": "Your access link is invalid. Open WhatsApp again from the Quaddro menu.",
+      "expired": "Your access link has expired. Open WhatsApp again from the Quaddro menu.",
+      "state": "Your access attempt timed out or was started in another browser. Please try again.",
+      "replay": "This access link has already been used. Please try again.",
+      "unavailable": "WhatsApp is temporarily unavailable. Please try again in a few moments."
+    }
   }
 }

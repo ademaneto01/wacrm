@@ -13,6 +13,7 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
 import { DEFAULT_CURRENCY } from "@/lib/currency";
+import { isQuaddroMode, quaddroAppUrl } from "@/lib/quaddro/config";
 import {
   canEditSettings as canEditSettingsFor,
   canManageMembers as canManageMembersFor,
@@ -386,7 +387,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     setProfile(null);
     setAccount(null);
-    window.location.href = "/login";
+    // In Quaddro mode there is no WACRM login page to land on — hand the
+    // user back to the Quaddro panel instead.
+    window.location.href = isQuaddroMode() ? quaddroAppUrl() : "/login";
   }, []);
 
   const refreshProfile = useCallback(async () => {

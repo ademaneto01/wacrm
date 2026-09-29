@@ -18,6 +18,8 @@
   },
   "Sidebar": {
     "title": "Modelo de CRM para WhatsApp",
+    "backToQuaddro": "Voltar para a Quaddro",
+    "quaddroTitle": "WhatsApp",
     "primaryNav": "Principal",
     "dashboard": "Painel",
     "inbox": "Caixa de entrada",
@@ -2049,5 +2051,19 @@
   },
   "DashboardShell": {
     "loading": "Carregando..."
+  },
+  "QuaddroSso": {
+    "errorTitle": "Não foi possível abrir o WhatsApp",
+    "retry": "Tentar novamente",
+    "connectTitle": "Conecte seu WhatsApp",
+    "connectDescription": "Conecte o número de WhatsApp do seu negócio para começar a atender seus clientes por aqui. Depois de conectado, suas conversas aparecem na Caixa de entrada.",
+    "errors": {
+      "not_configured": "O módulo de WhatsApp ainda não está configurado. Fale com o suporte da Quaddro.",
+      "invalid": "Seu link de acesso é inválido. Abra o WhatsApp novamente pelo menu da Quaddro.",
+      "expired": "Seu link de acesso expirou. Abra o WhatsApp novamente pelo menu da Quaddro.",
+      "state": "Sua tentativa de acesso expirou ou foi iniciada em outro navegador. Tente novamente.",
+      "replay": "Este link de acesso já foi usado. Tente novamente.",
+      "unavailable": "O WhatsApp está temporariamente indisponível. Tente novamente em instantes."
+    }
   }
 }

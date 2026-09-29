@@ -1,4 +1,6 @@
 import { ImageResponse } from "next/og";
+import { QUADDRO_BLUE, QUADDRO_MARK_PATH } from "@/components/brand/quaddro-logo";
+import { isQuaddroMode } from "@/lib/quaddro/config";
 
 // Replaces the default Next.js favicon with the brand mark — Hostinger
 // violet rounded square + white chat-square glyph — matching the
@@ -13,6 +15,30 @@ export const size = { width: 32, height: 32 };
 export const contentType = "image/png";
 
 export default function Icon() {
+  // As the Quaddro WhatsApp module: the Quaddro panel's own favicon mark.
+  if (isQuaddroMode()) {
+    return new ImageResponse(
+      (
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: QUADDRO_BLUE,
+            borderRadius: 6,
+          }}
+        >
+          <svg width="26" height="26" viewBox="0 0 100 100">
+            <path fillRule="evenodd" clipRule="evenodd" d={QUADDRO_MARK_PATH} fill="#ffffff" />
+          </svg>
+        </div>
+      ),
+      { ...size },
+    );
+  }
+
   return new ImageResponse(
     (
       <div

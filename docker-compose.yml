@@ -12,6 +12,9 @@ services:
         NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
         NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-}
         NEXT_PUBLIC_APP_LOCALE: ${NEXT_PUBLIC_APP_LOCALE:-en}
+        # Quaddro WhatsApp module (optional). The matching server secret,
+        # QUADDRO_SSO_SECRET, is read at runtime from .env.local.
+        NEXT_PUBLIC_QUADDRO_APP_URL: ${NEXT_PUBLIC_QUADDRO_APP_URL:-}
     # Runtime (server-only) secrets come from .env.local; they are
     # never baked into the image.
     env_file:

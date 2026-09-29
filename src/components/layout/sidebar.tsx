@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useTotalUnread } from "@/hooks/use-total-unread";
 import { useUnreadNotifications } from "@/hooks/use-unread-notifications";
 import {
+  ArrowLeft,
   Bell,
   Bot,
   Crown,
@@ -27,6 +28,8 @@ import {
   Zap,
 } from "lucide-react";
 import type { AccountRole } from "@/lib/auth/roles";
+import { QuaddroMark } from "@/components/brand/quaddro-logo";
+import { isQuaddroMode, quaddroAppUrl } from "@/lib/quaddro/config";
 
 // Per-role chip metadata used in the sidebar's account strip + the
 // Members tab roster. Keeping this near both consumers in a single
@@ -116,6 +119,8 @@ import { useTranslations } from "next-intl";
 export function Sidebar({ open = false, onClose }: SidebarProps) {
   const t = useTranslations("Sidebar");
   const pathname = usePathname();
+  // Running as the Quaddro WhatsApp module (src/lib/quaddro/config.ts).
+  const quaddro = isQuaddroMode();
   const { profile, profileLoading, account, accountRole, signOut } = useAuth();
   const totalUnread = useTotalUnread();
   const unreadNotifications = useUnreadNotifications();
@@ -189,10 +194,14 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
         <div className="flex h-14 shrink-0 items-center justify-between gap-2 border-b border-border px-4">
           <Link href="/dashboard" className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <MessageSquare className="h-4 w-4" />
+              {quaddro ? (
+                <QuaddroMark className="h-5 w-5" />
+              ) : (
+                <MessageSquare className="h-4 w-4" />
+              )}
             </div>
             <span className="text-sm font-semibold text-foreground">
-              {t("title")}
+              {quaddro ? t("quaddroTitle") : t("title")}
             </span>
           </Link>
           <button
@@ -290,6 +299,18 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
                 </li>
               );
             })}
+            {quaddro ? (
+              <li>
+                {/* Full navigation out to the Quaddro panel. */}
+                <a
+                  href={quaddroAppUrl()}
+                  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground lg:py-2"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  {t("backToQuaddro")}
+                </a>
+              </li>
+            ) : null}
           </ul>
         </nav>
 

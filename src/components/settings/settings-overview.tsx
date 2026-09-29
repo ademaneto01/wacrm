@@ -13,7 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
-import { SECTION_META, type SettingsSection } from './settings-sections';
+import { SECTION_META, isSectionAvailable, type SettingsSection } from './settings-sections';
 import { SettingsChip, StatusDot } from './settings-chip';
 import { ROLE_META } from './role-meta';
 
@@ -251,7 +251,7 @@ export function SettingsOverview({
 
       {/* Status tiles */}
       <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        {tiles.map(({ section, loading, subtitle }) => {
+        {tiles.filter(({ section }) => isSectionAvailable(section)).map(({ section, loading, subtitle }) => {
           const meta = SECTION_META[section];
           const Icon = meta.icon;
           return (

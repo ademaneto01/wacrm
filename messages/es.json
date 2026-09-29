@@ -18,6 +18,8 @@
   },
   "Sidebar": {
     "title": "Plantilla de CRM para WhatsApp",
+    "backToQuaddro": "Volver a Quaddro",
+    "quaddroTitle": "WhatsApp",
     "primaryNav": "Principal",
     "dashboard": "Panel",
     "inbox": "Bandeja de entrada",
@@ -2049,5 +2051,19 @@
   },
   "DashboardShell": {
     "loading": "Cargando..."
+  },
+  "QuaddroSso": {
+    "errorTitle": "No pudimos abrir WhatsApp",
+    "retry": "Intentar de nuevo",
+    "connectTitle": "Conecta tu WhatsApp",
+    "connectDescription": "Conecta el número de WhatsApp de tu negocio para empezar a atender a tus clientes aquí. Una vez conectado, tus conversaciones aparecen en la Bandeja de entrada.",
+    "errors": {
+      "not_configured": "El módulo de WhatsApp aún no está configurado. Contacta al soporte de Quaddro.",
+      "invalid": "Tu enlace de acceso no es válido. Abre WhatsApp de nuevo desde el menú de Quaddro.",
+      "expired": "Tu enlace de acceso expiró. Abre WhatsApp de nuevo desde el menú de Quaddro.",
+      "state": "Tu intento de acceso expiró o se inició en otro navegador. Inténtalo de nuevo.",
+      "replay": "Este enlace de acceso ya fue usado. Inténtalo de nuevo.",
+      "unavailable": "WhatsApp no está disponible temporalmente. Inténtalo de nuevo en unos momentos."
+    }
   }
 }

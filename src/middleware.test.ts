@@ -138,3 +138,49 @@ describe("middleware — every dashboard route requires a session", () => {
     expect(new URL(res.headers.get("location")!).pathname).toBe("/login");
   });
 });
+
+describe("middleware — Quaddro mode (SSO only)", () => {
+  beforeEach(() => vi.stubEnv("NEXT_PUBLIC_QUADDRO_APP_URL", "https://pro.quaddro.test"));
+  afterEach(() => vi.unstubAllEnvs());
+
+  it.each(["/login", "/signup", "/forgot-password", "/reset-password", "/join/abc"])(
+    "sends a signed-out visitor on %s into the SSO flow",
+    async (path) => {
+      mockUser = null;
+      const res = await middleware(new NextRequest(`https://app.test${path}`));
+      const location = new URL(res.headers.get("location")!);
+      expect(location.pathname).toBe("/api/sso/quaddro/start");
+      expect(location.searchParams.get("next")).toBe("/inbox");
+    },
+  );
+
+  it("sends a signed-in visitor on /login to the dashboard", async () => {
+    mockUser = { id: "user-1" };
+    refreshedCookies = [ROTATED];
+    const res = await middleware(new NextRequest("https://app.test/login?invite=abc"));
+    expect(new URL(res.headers.get("location")!).pathname).toBe("/dashboard");
+    expect(res.cookies.get(ROTATED.name)?.value).toBe(ROTATED.value);
+  });
+
+  it("re-authenticates a signed-out deep link through SSO and keeps the path", async () => {
+    mockUser = null;
+    const res = await middleware(new NextRequest("https://app.test/contacts?tab=all"));
+    const location = new URL(res.headers.get("location")!);
+    expect(location.pathname).toBe("/api/sso/quaddro/start");
+    expect(location.searchParams.get("next")).toBe("/contacts?tab=all");
+  });
+
+  it("closes team-management APIs, even for signed-in users", async () => {
+    mockUser = { id: "user-1" };
+    const res = await middleware(
+      new NextRequest("https://app.test/api/account/invitations", { method: "POST" }),
+    );
+    expect(res.status).toBe(403);
+  });
+
+  it("leaves the SSO endpoints reachable without a session", async () => {
+    mockUser = null;
+    const res = await middleware(new NextRequest("https://app.test/api/sso/quaddro/start"));
+    expect(res.headers.get("location")).toBeNull();
+  });
+});

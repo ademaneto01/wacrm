@@ -18,6 +18,8 @@
   },
   "Sidebar": {
     "title": "WhatsApp용 CRM 템플릿",
+    "backToQuaddro": "Quaddro로 돌아가기",
+    "quaddroTitle": "WhatsApp",
     "primaryNav": "기본 메뉴",
     "dashboard": "대시보드",
     "inbox": "인박스",
@@ -2061,5 +2063,19 @@
   },
   "DashboardShell": {
     "loading": "불러오는 중..."
+  },
+  "QuaddroSso": {
+    "errorTitle": "WhatsApp을 열 수 없습니다",
+    "retry": "다시 시도",
+    "connectTitle": "WhatsApp 연결",
+    "connectDescription": "비즈니스 WhatsApp 번호를 연결하면 여기에서 고객 응대를 시작할 수 있습니다. 연결되면 대화가 인박스에 표시됩니다.",
+    "errors": {
+      "not_configured": "WhatsApp 모듈이 아직 설정되지 않았습니다. Quaddro 지원팀에 문의하세요.",
+      "invalid": "접속 링크가 유효하지 않습니다. Quaddro 메뉴에서 WhatsApp을 다시 여세요.",
+      "expired": "접속 링크가 만료되었습니다. Quaddro 메뉴에서 WhatsApp을 다시 여세요.",
+      "state": "접속 시도가 만료되었거나 다른 브라우저에서 시작되었습니다. 다시 시도하세요.",
+      "replay": "이미 사용된 접속 링크입니다. 다시 시도하세요.",
+      "unavailable": "WhatsApp을 일시적으로 사용할 수 없습니다. 잠시 후 다시 시도하세요."
+    }
   }
 }

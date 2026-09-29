@@ -13,7 +13,10 @@
  *   2. Add an entry below. The order here drives the picker grid.
  */
 
+import { isQuaddroMode } from "@/lib/quaddro/config";
+
 export const THEME_IDS = [
+  "quaddro",
   "violet",
   "emerald",
   "cobalt",
@@ -23,7 +26,9 @@ export const THEME_IDS = [
 
 export type ThemeId = (typeof THEME_IDS)[number];
 
-export const DEFAULT_THEME: ThemeId = "violet";
+// As the Quaddro WhatsApp module (src/lib/quaddro/config.ts) the app
+// opens in the Quaddro panel's own look: brand blue on light surfaces.
+export const DEFAULT_THEME: ThemeId = isQuaddroMode() ? "quaddro" : "violet";
 
 export const STORAGE_KEY = "wacrm.theme";
 
@@ -43,7 +48,7 @@ export const MODES = ["light", "dark"] as const;
 
 export type Mode = (typeof MODES)[number];
 
-export const DEFAULT_MODE: Mode = "dark";
+export const DEFAULT_MODE: Mode = isQuaddroMode() ? "light" : "dark";
 
 export const MODE_STORAGE_KEY = "wacrm.mode";
 
@@ -67,6 +72,12 @@ export interface ThemeMeta {
 }
 
 export const THEMES: ReadonlyArray<ThemeMeta> = [
+  {
+    id: "quaddro",
+    name: "Quaddro",
+    tagline: "The Quaddro panel's brand blue.",
+    swatch: "oklch(0.476 0.297 264.2)",
+  },
   {
     id: "violet",
     name: "Violet",

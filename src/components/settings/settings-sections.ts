@@ -12,6 +12,7 @@ import {
   Zap,
   type LucideIcon,
 } from 'lucide-react';
+import { isQuaddroMode } from '@/lib/quaddro/config';
 
 /**
  * Settings information architecture for the redesigned page.
@@ -67,6 +68,17 @@ export const RAIL_GROUPS: { label: string | null; group: SectionMeta['group'] }[
   { label: 'Workspace', group: 'workspace' },
 ];
 
+/**
+ * Sections that make no sense when the app runs as the Quaddro WhatsApp
+ * module: Quaddro users have no WACRM password (security) and the team
+ * is managed in Quaddro (members). See src/lib/quaddro/config.ts.
+ */
+const QUADDRO_HIDDEN_SECTIONS: readonly SettingsSection[] = ['security', 'members'];
+
+export function isSectionAvailable(section: SettingsSection): boolean {
+  return !(isQuaddroMode() && QUADDRO_HIDDEN_SECTIONS.includes(section));
+}
+
 function isSection(value: string | null): value is SettingsSection {
   return !!value && (SETTINGS_SECTIONS as readonly string[]).includes(value);
 }
@@ -79,6 +91,6 @@ function isSection(value: string | null): value is SettingsSection {
  */
 export function resolveSection(raw: string | null): SettingsSection {
   if (raw === 'tags' || raw === 'custom-fields') return 'fields';
-  if (isSection(raw)) return raw;
+  if (isSection(raw) && isSectionAvailable(raw)) return raw;
   return DEFAULT_SECTION;
 }

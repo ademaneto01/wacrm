@@ -75,6 +75,19 @@ BEGIN
       'messages.error_code/error_title/error_details are missing — migration 042 did not apply';
   END IF;
 
+  -- Quaddro SSO (043): the mapping tables and the provisioning RPC the
+  -- SSO callback calls. A missing function is a 500 on every sign-in.
+  IF to_regclass('public.quaddro_business_links') IS NULL
+     OR to_regclass('public.quaddro_member_links') IS NULL
+     OR to_regclass('public.quaddro_sso_nonces') IS NULL THEN
+    RAISE EXCEPTION 'quaddro_* link tables are missing — migration 043 did not apply';
+  END IF;
+  IF to_regprocedure(
+       'public.quaddro_provision_member(text,text,uuid,text,uuid,account_role_enum,text,text)'
+     ) IS NULL THEN
+    RAISE EXCEPTION 'quaddro_provision_member is missing — migration 043 did not apply';
+  END IF;
+
   RAISE NOTICE 'schema verification passed';
 END
 $$;

@@ -1,5 +1,8 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { isQuaddroMode } from '@/lib/quaddro/config'
+import { DEFAULT_LANDING } from '@/lib/quaddro/sso-flow'
+import { isPasswordAuthPage, isQuaddroManagedApi, ssoStartPath } from '@/lib/quaddro/routing'
 
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
@@ -42,6 +45,23 @@ export async function middleware(request: NextRequest) {
     return response
   }
 
+  // Quaddro mode: identity and team membership come from Quaddro SSO
+  // only (src/lib/quaddro/). Password/signup/invite pages bounce into
+  // the SSO flow, and team-management APIs are closed.
+  const quaddroMode = isQuaddroMode()
+  if (quaddroMode) {
+    const { pathname } = request.nextUrl
+    if (isPasswordAuthPage(pathname)) {
+      const target = user ? '/dashboard' : ssoStartPath(DEFAULT_LANDING)
+      return withRefreshedCookies(NextResponse.redirect(new URL(target, request.url)))
+    }
+    if (isQuaddroManagedApi(pathname, request.method)) {
+      return withRefreshedCookies(
+        NextResponse.json({ error: 'Team membership is managed in Quaddro' }, { status: 403 })
+      )
+    }
+  }
+
   // Auth pages - redirect to dashboard if already logged in.
   // Exception: when an invite token is in the query string we
   // send the already-signed-in user to /join/<token> instead so
@@ -74,6 +94,11 @@ export async function middleware(request: NextRequest) {
   // middleware.test.ts reads that directory and fails on a missing one.
   const protectedPaths = ['/dashboard', '/inbox', '/contacts', '/pipelines', '/broadcasts', '/automations', '/flows', '/agents', '/notifications', '/settings']
   if (!user && protectedPaths.some(path => request.nextUrl.pathname.startsWith(path))) {
+    if (quaddroMode) {
+      // Silent re-authentication through Quaddro, back to this page.
+      const back = `${request.nextUrl.pathname}${request.nextUrl.search}`
+      return withRefreshedCookies(NextResponse.redirect(new URL(ssoStartPath(back), request.url)))
+    }
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return withRefreshedCookies(NextResponse.redirect(url))

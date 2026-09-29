@@ -14,18 +14,23 @@ import {
   STORAGE_KEY,
   THEME_IDS,
 } from "@/lib/themes";
+import { isQuaddroMode } from "@/lib/quaddro/config";
 
 const inter = Inter({
   variable: "--font-sans",
   subsets: ["latin"],
 });
 
+// As the Quaddro WhatsApp module the tab reads as part of Quaddro.
+const quaddro = isQuaddroMode();
+
 export const metadata: Metadata = {
-  title: {
-    default: "wacrm",
-    template: "%s — wacrm",
-  },
-  description: "Self-hostable CRM template for WhatsApp.",
+  title: quaddro
+    ? { default: "WhatsApp · Quaddro", template: "%s · Quaddro" }
+    : { default: "wacrm", template: "%s — wacrm" },
+  description: quaddro
+    ? "Atendimento por WhatsApp do seu negócio na Quaddro."
+    : "Self-hostable CRM template for WhatsApp.",
   robots: {
     index: false,
     follow: false,
@@ -41,7 +46,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#020617",
+  themeColor: quaddro ? "#F3F4F6" : "#020617",
   colorScheme: "dark light",
 };
 

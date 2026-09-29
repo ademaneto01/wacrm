@@ -9,6 +9,8 @@ import { Header } from "@/components/layout/header";
 import { AccountAccessAlert } from "@/components/layout/account-access-alert";
 import { PresenceHeartbeat } from "@/components/presence/presence-heartbeat";
 import { BrowserNotificationsListener } from "@/components/notifications/browser-notifications-listener";
+import { isQuaddroMode } from "@/lib/quaddro/config";
+import { ssoStartPath } from "@/lib/quaddro/routing";
 
 // Auth-gated dashboard shell. Extracted from the layout so the layout
 // itself can stay a server component and export metadata (noindex) —
@@ -26,6 +28,15 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!loading && !user) {
+      if (isQuaddroMode()) {
+        // Session gone mid-visit: re-authenticate through Quaddro and
+        // come back to this page (a full navigation — it's a redirect
+        // chain through the Quaddro panel, not a client route).
+        window.location.href = ssoStartPath(
+          `${window.location.pathname}${window.location.search}`,
+        );
+        return;
+      }
       router.push("/login");
     }
   }, [user, loading, router]);
