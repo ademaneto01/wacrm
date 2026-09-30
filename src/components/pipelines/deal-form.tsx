@@ -5,6 +5,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { CURRENCIES } from "@/lib/currency";
+import { conversationHref } from "@/lib/notifications/browser-notify";
 import type {
   Contact,
   Conversation,
@@ -284,9 +285,11 @@ export function DealForm({
                 ))}
               </select>
 
+              {/* A deal is tied to its contact, not to a conversation, so
+                  this deep-links to the contact's latest conversation. */}
               {linkedConversation && (
                 <Link
-                  href="/inbox"
+                  href={conversationHref(linkedConversation.id)}
                   className="mt-1 inline-flex items-center gap-1.5 self-start rounded-md bg-primary/10 px-2 py-1 text-xs text-primary hover:bg-primary/20"
                 >
                   <MessageSquare className="h-3 w-3" />
@@ -381,12 +384,15 @@ export function DealForm({
                 <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                   {t("status")}
                 </p>
-                <div className="flex gap-2">
+                {/* Grid + min-w-0 + wrapping labels: Button defaults to
+                    shrink-0 / nowrap, so longer translations ("Marcar
+                    como perdido") pushed the pair past the card edge. */}
+                <div className="grid grid-cols-2 gap-2">
                   <Button
                     type="button"
                     onClick={() => handleStatusChange("won")}
                     disabled={!!statusAction || deal.status === "won"}
-                    className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+                    className="h-auto min-h-8 min-w-0 whitespace-normal py-1.5 text-center bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
                   >
                     {statusAction === "won" ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -401,7 +407,7 @@ export function DealForm({
                     type="button"
                     onClick={() => handleStatusChange("lost")}
                     disabled={!!statusAction || deal.status === "lost"}
-                    className="flex-1 bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+                    className="h-auto min-h-8 min-w-0 whitespace-normal py-1.5 text-center bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
                   >
                     {statusAction === "lost" ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
