@@ -1416,6 +1416,7 @@
     "tagsAndFields": {
       "title": "Fields & tags",
       "description": "Two ways to organize contacts: colour-coded tags for quick grouping, and custom fields for structured data.",
+      "adminOnlyHint": "Only account admins can create or delete tags.",
       "tagsTitle": "Tags",
       "tagsDesc": "Colour-coded labels for grouping and filtering contacts.",
       "fieldsTitle": "Custom fields",
@@ -1451,6 +1452,7 @@
     "templates": {
       "title": "Message templates",
       "description": "Create templates and submit them to Meta for approval. Use \"Sync from Meta\" to pull templates approved elsewhere.",
+      "adminOnlyHint": "Only account admins can create, sync, edit or delete templates.",
       "syncFromMeta": "Sync from Meta",
       "qualityScoreTitle": "Meta quality score",
       "headerTextLabel": "Header text",

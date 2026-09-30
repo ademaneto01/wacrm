@@ -69,6 +69,12 @@ const nextConfig: NextConfig = {
   // Harmless outside Docker: `next start` keeps working as before.
   output: "standalone",
 
+  // Dev-only "Issues" badge. Its bottom-left spot sits on top of the
+  // sidebar's user card; errors the user must see are raised as toasts
+  // (top-right, see src/components/themed-toaster.tsx). Compile and
+  // runtime errors still open Next's error overlay in development.
+  devIndicators: false,
+
   /**
    * Cross-origin dev access (Next.js 16).
    *

@@ -1416,6 +1416,7 @@
     "tagsAndFields": {
       "title": "Campos y etiquetas",
       "description": "Dos formas de organizar contactos: etiquetas de colores para agrupar rápido y campos personalizados para datos estructurados.",
+      "adminOnlyHint": "Solo los administradores de la cuenta pueden crear o eliminar etiquetas.",
       "tagsTitle": "Etiquetas",
       "tagsDesc": "Rótulos de colores para agrupar y filtrar contactos.",
       "fieldsTitle": "Campos personalizados",
@@ -1451,6 +1452,7 @@
     "templates": {
       "title": "Plantillas de mensaje",
       "description": "Crea plantillas y envíalas a Meta para su aprobación. Usa \"Sincronizar desde Meta\" para traer plantillas aprobadas en otro lugar.",
+      "adminOnlyHint": "Solo los administradores de la cuenta pueden crear, sincronizar, editar o eliminar plantillas.",
       "syncFromMeta": "Sincronizar desde Meta",
       "qualityScoreTitle": "Puntuación de calidad de Meta",
       "headerTextLabel": "Texto del encabezado",

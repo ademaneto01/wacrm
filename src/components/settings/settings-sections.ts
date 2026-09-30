@@ -72,14 +72,13 @@ export const RAIL_GROUPS: { label: string | null; group: SectionMeta['group'] }[
  * Sections that make no sense when the app runs as the Quaddro WhatsApp
  * module: Quaddro users have no WACRM password (security) and the team
  * is managed in Quaddro (members). The look is fixed to the Quaddro
- * brand in light mode (appearance). Templates, quick replies, deals &
- * currency and API keys are switched off for the MVP. See
+ * brand in light mode (appearance). Quick replies, deals & currency and
+ * API keys are switched off for the MVP. See
  * src/lib/quaddro/config.ts.
  */
 const QUADDRO_HIDDEN_SECTIONS: readonly SettingsSection[] = [
   'security',
   'appearance',
-  'templates',
   'quick-replies',
   'deals',
   'members',

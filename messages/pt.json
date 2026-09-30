@@ -1416,6 +1416,7 @@
     "tagsAndFields": {
       "title": "Campos e tags",
       "description": "Duas formas de organizar contatos: tags coloridas para agrupar rapidamente e campos personalizados para dados estruturados.",
+      "adminOnlyHint": "Somente administradores da conta podem criar ou excluir tags.",
       "tagsTitle": "Tags",
       "tagsDesc": "Rótulos coloridos para agrupar e filtrar contatos.",
       "fieldsTitle": "Campos personalizados",
@@ -1451,6 +1452,7 @@
     "templates": {
       "title": "Modelos de mensagem",
       "description": "Crie modelos e envie-os à Meta para aprovação. Use \"Sincronizar da Meta\" para importar modelos aprovados em outro lugar.",
+      "adminOnlyHint": "Somente administradores da conta podem criar, sincronizar, editar ou excluir modelos.",
       "syncFromMeta": "Sincronizar da Meta",
       "qualityScoreTitle": "Pontuação de qualidade da Meta",
       "headerTextLabel": "Texto do cabeçalho",

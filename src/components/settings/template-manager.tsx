@@ -132,7 +132,7 @@ function emptyButton(type: TemplateButton['type']): TemplateButton {
 export function TemplateManager() {
   const t = useTranslations('Settings.templates');
   const supabase = createClient();
-  const { user, loading: authLoading } = useAuth();
+  const { user, canEditSettings, loading: authLoading } = useAuth();
 
   const [loading, setLoading] = useState(true);
   const [templates, setTemplates] = useState<MessageTemplate[]>([]);
@@ -189,17 +189,18 @@ export function TemplateManager() {
       setLoading(false);
       return;
     }
-    fetchTemplates(user.id);
+    fetchTemplates();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authLoading, user?.id]);
 
-  async function fetchTemplates(userId: string) {
+  async function fetchTemplates() {
     try {
       setLoading(true);
+      // Scoped by RLS (message_templates_select → is_account_member), not
+      // user_id — same reasoning as the inbox template picker.
       const { data, error } = await supabase
         .from('message_templates')
         .select('*')
-        .eq('user_id', userId)
         .order('created_at', { ascending: false });
       if (error) throw error;
       setTemplates(data || []);
@@ -286,7 +287,7 @@ export function TemplateManager() {
       }
       // Refresh first, then close — re-opening the dialog
       // immediately should not show a stale list.
-      if (user) await fetchTemplates(user.id);
+      if (user) await fetchTemplates();
       toast.success(
         data.dry_run
           ? isEdit
@@ -340,7 +341,7 @@ export function TemplateManager() {
           { duration: 10000 },
         );
       }
-      await fetchTemplates(user.id);
+      await fetchTemplates();
     } catch (err) {
       console.error('Template sync error:', err);
       toast.error(err instanceof Error ? err.message : t('toastSyncError'));
@@ -523,6 +524,9 @@ export function TemplateManager() {
         title={t('title')}
         description={t('description')}
         action={
+          // Sync / create / edit / delete are admin-only (requireRole +
+          // message_templates RLS); agents just browse the catalogue.
+          canEditSettings ? (
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
@@ -538,6 +542,11 @@ export function TemplateManager() {
               {t('newTemplate')}
             </Button>
           </div>
+          ) : (
+            <p className="max-w-xs text-xs text-muted-foreground">
+              {t('adminOnlyHint')}
+            </p>
+          )
         }
       />
 
@@ -606,6 +615,7 @@ export function TemplateManager() {
                       </div>
                     )}
                   </div>
+                  {canEditSettings && (
                   <div className="flex items-center gap-1 shrink-0 ml-2">
                     {statusKey === 'APPROVED' && (
                       <Button
@@ -657,6 +667,7 @@ export function TemplateManager() {
                       )}
                     </Button>
                   </div>
+                  )}
                 </CardContent>
               </Card>
             );

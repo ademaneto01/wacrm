@@ -40,12 +40,14 @@ const PRESET_COLORS = [
 /**
  * Tags card — colour-coded contact labels. Creation is an inline row
  * (name + colour swatch + Add); deletion goes through a confirmation
- * dialog since it detaches the tag from every contact.
+ * dialog since it detaches the tag from every contact. Tags belong to
+ * the account: everyone sees them, only admins may create or delete
+ * (tags_insert / tags_delete RLS), so agents get a read-only card.
  */
 export function TagManager() {
   const t = useTranslations('Settings.tagsAndFields');
   const supabase = createClient();
-  const { user, accountId, loading: authLoading } = useAuth();
+  const { user, accountId, canEditSettings, loading: authLoading } = useAuth();
 
   const [loading, setLoading] = useState(true);
   const [tags, setTags] = useState<Tag[]>([]);
@@ -62,17 +64,18 @@ export function TagManager() {
       setLoading(false);
       return;
     }
-    fetchTags(user.id);
+    fetchTags();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authLoading, user?.id]);
 
-  async function fetchTags(userId: string) {
+  async function fetchTags() {
     try {
       setLoading(true);
+      // Scoped by RLS (tags_select → is_account_member), not user_id:
+      // a teammate's tags are the account's tags too.
       const { data, error } = await supabase
         .from('tags')
         .select('*')
-        .eq('user_id', userId)
         .order('created_at', { ascending: true });
 
       if (error) throw error;
@@ -112,9 +115,9 @@ export function TagManager() {
       toast.success(t('tagCreated'));
       setNewTagName('');
       setSelectedColor(PRESET_COLORS[3].value);
-      await fetchTags(user.id);
+      await fetchTags();
     } catch (err) {
-      console.error('Create error:', err);
+      console.error('Create error:', err instanceof Error ? err.message : err);
       toast.error(t('failedToCreateTag'));
     } finally {
       setSaving(false);
@@ -185,14 +188,16 @@ export function TagManager() {
                       style={{ backgroundColor: tag.color }}
                     />
                     {tag.name}
-                    <button
-                      type="button"
-                      onClick={() => confirmDelete(tag)}
-                      aria-label={t('deleteAria', { name: tag.name })}
-                      className="ml-0.5 rounded-full p-0.5 opacity-60 transition-opacity hover:bg-black/10 hover:opacity-100 dark:hover:bg-white/10"
-                    >
-                      <X className="size-3" />
-                    </button>
+                    {canEditSettings && (
+                      <button
+                        type="button"
+                        onClick={() => confirmDelete(tag)}
+                        aria-label={t('deleteAria', { name: tag.name })}
+                        className="ml-0.5 rounded-full p-0.5 opacity-60 transition-opacity hover:bg-black/10 hover:opacity-100 dark:hover:bg-white/10"
+                      >
+                        <X className="size-3" />
+                      </button>
+                    )}
                   </span>
                 ))}
               </div>
@@ -202,7 +207,14 @@ export function TagManager() {
               </p>
             )}
 
+            {!canEditSettings && (
+              <p className="text-xs text-muted-foreground">
+                {t('adminOnlyHint')}
+              </p>
+            )}
+
             {/* Inline create row */}
+            {canEditSettings && (
             <div className="flex flex-wrap items-center gap-2.5">
               <Input
                 placeholder={t('placeholder')}
@@ -247,6 +259,7 @@ export function TagManager() {
                 {t('addTag')}
               </Button>
             </div>
+            )}
           </>
         )}
       </CardContent>
