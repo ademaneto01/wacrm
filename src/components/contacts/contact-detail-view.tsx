@@ -465,36 +465,38 @@ export function ContactDetailView({
 
             {/* Tabs */}
             <Tabs defaultValue="details" className="flex-1 flex flex-col min-h-0">
-              <TabsList className="bg-muted/50 border-b border-border mx-4 mt-3">
+              {/* Full width (not the default w-fit) with shrinkable triggers, so
+                  all five tabs stay inside the sheet on narrow widths. */}
+              <TabsList className="bg-muted/50 border-b border-border mx-4 mt-3 flex w-auto">
                 <TabsTrigger
                   value="details"
-                  className="data-active:bg-muted data-active:text-primary text-muted-foreground"
+                  className="min-w-0 data-active:bg-muted data-active:text-primary text-muted-foreground"
                 >
-                  {t('tabs.details')}
+                  <span className="truncate">{t('tabs.details')}</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="tags"
-                  className="data-active:bg-muted data-active:text-primary text-muted-foreground"
+                  className="min-w-0 data-active:bg-muted data-active:text-primary text-muted-foreground"
                 >
-                  {t('tabs.tags')}
+                  <span className="truncate">{t('tabs.tags')}</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="notes"
-                  className="data-active:bg-muted data-active:text-primary text-muted-foreground"
+                  className="min-w-0 data-active:bg-muted data-active:text-primary text-muted-foreground"
                 >
-                  {t('tabs.notes')}
+                  <span className="truncate">{t('tabs.notes')}</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="custom"
-                  className="data-active:bg-muted data-active:text-primary text-muted-foreground"
+                  className="min-w-0 data-active:bg-muted data-active:text-primary text-muted-foreground"
                 >
-                  {t('tabs.custom')}
+                  <span className="truncate">{t('tabs.custom')}</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="deals"
-                  className="data-active:bg-muted data-active:text-primary text-muted-foreground"
+                  className="min-w-0 data-active:bg-muted data-active:text-primary text-muted-foreground"
                 >
-                  {t('tabs.deals')}
+                  <span className="truncate">{t('tabs.deals')}</span>
                 </TabsTrigger>
               </TabsList>
 
