@@ -106,11 +106,16 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <Script
-          id="theme-boot"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }}
-        />
+        {/* As the Quaddro module the look is fixed (Quaddro blue, light
+            mode) — no mode toggle or appearance settings — so a choice
+            saved in localStorage before the switch must not apply. */}
+        {quaddro ? null : (
+          <Script
+            id="theme-boot"
+            strategy="beforeInteractive"
+            dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }}
+          />
+        )}
       </head>
       <body className="min-h-full bg-background text-foreground font-sans">
         <NextIntlClientProvider messages={messages} locale={locale}>

@@ -5,6 +5,8 @@ import { UserPlus, Briefcase, Radio, Zap } from 'lucide-react'
 import type { ComponentType } from 'react'
 
 import { useTranslations } from 'next-intl'
+import { isQuaddroMode } from '@/lib/quaddro/config'
+import { isQuaddroDisabledPage } from '@/lib/quaddro/routing'
 
 // Quick-action shortcuts. Each navigates to the page that owns the
 // relevant "create" flow. We deliberately don't try to auto-open any
@@ -26,10 +28,14 @@ const ACTIONS: Action[] = [
 
 export function QuickActions() {
   const t = useTranslations('Dashboard.quickActions')
-  
+  // Hide shortcuts into sections disabled for the Quaddro MVP.
+  const actions = isQuaddroMode()
+    ? ACTIONS.filter((a) => !isQuaddroDisabledPage(a.href))
+    : ACTIONS
+
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-      {ACTIONS.map((a) => {
+      {actions.map((a) => {
         const Icon = a.icon
         return (
           <Link

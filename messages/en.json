@@ -1703,6 +1703,7 @@
       "uploadPhoto": "Upload photo",
       "remove": "Remove",
       "photoHint": "PNG, JPG, WebP, or GIF. Up to 2 MB.",
+      "managedByQuaddro": "Name and email come from your Quaddro account and can only be changed there.",
       "unknownError": "Unknown error",
       "displayName": "Display name",
       "email": "Email",

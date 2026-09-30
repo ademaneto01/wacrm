@@ -1693,6 +1693,7 @@
       "uploadPhoto": "Subir foto",
       "remove": "Quitar",
       "photoHint": "PNG, JPG, WebP o GIF. Hasta 2 MB.",
+      "managedByQuaddro": "El nombre y el correo vienen de tu cuenta de Quaddro y solo se pueden cambiar allí.",
       "unknownError": "Error desconocido",
       "displayName": "Nombre para mostrar",
       "email": "Correo electrónico",

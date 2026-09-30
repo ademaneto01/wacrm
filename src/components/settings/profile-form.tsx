@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 import { useTranslations } from 'next-intl';
+import { isQuaddroMode } from '@/lib/quaddro/config';
 import { SettingsPanelHead } from './settings-panel-head';
 import { BrowserNotificationsCard } from './browser-notifications-card';
 
@@ -37,6 +38,9 @@ export function ProfileForm() {
   const { user, profile, refreshProfile } = useAuth();
   const supabase = createClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  // As the Quaddro module, name and email are Quaddro's (synced on every
+  // SSO sign-in), so they're shown read-only and never saved from here.
+  const identityLocked = isQuaddroMode();
 
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -103,12 +107,12 @@ export function ProfileForm() {
     if (!user || !profile) return;
 
     const trimmedName = fullName.trim();
-    if (!trimmedName) {
+    if (!identityLocked && !trimmedName) {
       toast.error(t('nameRequired'));
       return;
     }
     const trimmedEmail = email.trim();
-    if (!EMAIL_RE.test(trimmedEmail)) {
+    if (!identityLocked && !EMAIL_RE.test(trimmedEmail)) {
       toast.error(t('invalidEmail'));
       return;
     }
@@ -143,10 +147,11 @@ export function ProfileForm() {
       // Persist name + avatar to profiles.
       const { error: updateError } = await supabase
         .from('profiles')
-        .update({
-          full_name: trimmedName,
-          avatar_url: nextAvatarUrl,
-        })
+        .update(
+          identityLocked
+            ? { avatar_url: nextAvatarUrl }
+            : { full_name: trimmedName, avatar_url: nextAvatarUrl },
+        )
         .eq('user_id', user.id);
       if (updateError) {
         throw new Error(t('saveFailed', { message: updateError.message }));
@@ -158,7 +163,10 @@ export function ProfileForm() {
       // after the user clicks the link (handled by the handle_new_user
       // trigger pattern in production deployments).
       let emailSent = false;
-      if (trimmedEmail.toLowerCase() !== profile.email.toLowerCase()) {
+      if (
+        !identityLocked &&
+        trimmedEmail.toLowerCase() !== profile.email.toLowerCase()
+      ) {
         const { error: emailError } = await supabase.auth.updateUser({
           email: trimmedEmail,
         });
@@ -274,7 +282,9 @@ export function ProfileForm() {
               placeholder="Ada Lovelace"
               maxLength={120}
               disabled={saving}
-              required
+              readOnly={identityLocked}
+              className={identityLocked ? 'bg-muted text-muted-foreground' : undefined}
+              required={!identityLocked}
             />
           </div>
 
@@ -289,8 +299,15 @@ export function ProfileForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={saving}
-              required
+              readOnly={identityLocked}
+              className={identityLocked ? 'bg-muted text-muted-foreground' : undefined}
+              required={!identityLocked}
             />
+            {identityLocked && (
+              <p className="text-xs text-muted-foreground">
+                {t('managedByQuaddro')}
+              </p>
+            )}
             {emailChangePending && (
               <p className="flex items-start gap-2 rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
                 <Mail className="mt-0.5 size-3.5 shrink-0" />

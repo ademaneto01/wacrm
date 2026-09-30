@@ -17,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ModeToggle } from "@/components/layout/mode-toggle";
+import { isQuaddroMode } from "@/lib/quaddro/config";
 
 const pageTitles: Record<string, string> = {
   "/dashboard": "dashboard",
@@ -49,6 +50,9 @@ export function Header({ onOpenSidebar }: HeaderProps) {
   const t = useTranslations("Header");
   const pathname = usePathname();
   const { profile, signOut } = useAuth();
+  // As the Quaddro module the look is fixed and the session is Quaddro's,
+  // so neither the mode toggle nor sign-out is offered.
+  const quaddro = isQuaddroMode();
   const titleKey = getPageTitleKey(pathname);
 
   const initial =
@@ -74,7 +78,7 @@ export function Header({ onOpenSidebar }: HeaderProps) {
       </div>
 
       <div className="flex items-center gap-1 sm:gap-2">
-        <ModeToggle />
+        {quaddro ? null : <ModeToggle />}
 
         <DropdownMenu>
         <DropdownMenuTrigger
@@ -132,14 +136,18 @@ export function Header({ onOpenSidebar }: HeaderProps) {
             <SettingsIcon className="size-4" />
             {t("menuSettings")}
           </DropdownMenuItem>
-          <DropdownMenuSeparator className="bg-border" />
-          <DropdownMenuItem
-            onClick={signOut}
-            className="text-popover-foreground focus:bg-accent focus:text-accent-foreground"
-          >
-            <LogOut className="size-4" />
-            {t("menuSignOut")}
-          </DropdownMenuItem>
+          {quaddro ? null : (
+            <>
+              <DropdownMenuSeparator className="bg-border" />
+              <DropdownMenuItem
+                onClick={signOut}
+                className="text-popover-foreground focus:bg-accent focus:text-accent-foreground"
+              >
+                <LogOut className="size-4" />
+                {t("menuSignOut")}
+              </DropdownMenuItem>
+            </>
+          )}
         </DropdownMenuContent>
         </DropdownMenu>
       </div>

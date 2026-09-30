@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { isQuaddroMode, quaddroAppUrl, quaddroUrl } from './config'
-import { isPasswordAuthPage, isQuaddroManagedApi, ssoStartPath } from './routing'
+import { isPasswordAuthPage, isQuaddroDisabledPage, isQuaddroManagedApi, ssoStartPath } from './routing'
 import {
   decodeStateCookie,
   encodeStateCookie,
@@ -37,6 +37,16 @@ describe('routing', () => {
 
   it.each(['/inbox', '/joinery', '/settings', '/login-help'])('%s is not', (path) =>
     expect(isPasswordAuthPage(path)).toBe(false),
+  )
+
+  it.each(['/broadcasts', '/broadcasts/new', '/automations/abc', '/flows', '/agents/x'])(
+    '%s is disabled for the MVP',
+    (path) => expect(isQuaddroDisabledPage(path)).toBe(true),
+  )
+
+  it.each(['/dashboard', '/inbox', '/contacts', '/notifications', '/pipelines', '/settings', '/agentsx'])(
+    '%s stays enabled',
+    (path) => expect(isQuaddroDisabledPage(path)).toBe(false),
   )
 
   it('closes team-management APIs but keeps reads and other APIs open', () => {

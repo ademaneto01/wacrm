@@ -38,3 +38,23 @@ export function isQuaddroManagedApi(pathname: string, method: string): boolean {
 export function ssoStartPath(pathWithSearch: string): string {
   return `${SSO_START_PATH}?next=${encodeURIComponent(pathWithSearch)}`
 }
+
+/**
+ * Dashboard sections switched off for the Quaddro MVP. Only the panel,
+ * inbox, contacts, notifications and pipelines (plus settings, needed
+ * to connect WhatsApp) stay reachable. Drop a path from this list to
+ * bring its section back — the sidebar and dashboard read it too.
+ */
+export const QUADDRO_DISABLED_PATHS: readonly string[] = [
+  '/broadcasts',
+  '/automations',
+  '/flows',
+  '/agents',
+]
+
+/** True for a page (or sub-page) of a section disabled in Quaddro mode. */
+export function isQuaddroDisabledPage(pathname: string): boolean {
+  return QUADDRO_DISABLED_PATHS.some(
+    (path) => pathname === path || pathname.startsWith(`${path}/`),
+  )
+}

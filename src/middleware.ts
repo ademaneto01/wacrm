@@ -2,7 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 import { isQuaddroMode } from '@/lib/quaddro/config'
 import { DEFAULT_LANDING } from '@/lib/quaddro/sso-flow'
-import { isPasswordAuthPage, isQuaddroManagedApi, ssoStartPath } from '@/lib/quaddro/routing'
+import { isPasswordAuthPage, isQuaddroDisabledPage, isQuaddroManagedApi, ssoStartPath } from '@/lib/quaddro/routing'
 
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
@@ -54,6 +54,10 @@ export async function middleware(request: NextRequest) {
     if (isPasswordAuthPage(pathname)) {
       const target = user ? '/dashboard' : ssoStartPath(DEFAULT_LANDING)
       return withRefreshedCookies(NextResponse.redirect(new URL(target, request.url)))
+    }
+    // Sections switched off for the MVP land on the panel instead.
+    if (isQuaddroDisabledPage(pathname)) {
+      return withRefreshedCookies(NextResponse.redirect(new URL('/dashboard', request.url)))
     }
     if (isQuaddroManagedApi(pathname, request.method)) {
       return withRefreshedCookies(

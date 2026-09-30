@@ -30,6 +30,7 @@ import {
 import type { AccountRole } from "@/lib/auth/roles";
 import { QuaddroMark } from "@/components/brand/quaddro-logo";
 import { isQuaddroMode, quaddroAppUrl } from "@/lib/quaddro/config";
+import { isQuaddroDisabledPage } from "@/lib/quaddro/routing";
 
 // Per-role chip metadata used in the sidebar's account strip + the
 // Members tab roster. Keeping this near both consumers in a single
@@ -121,6 +122,10 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
   const pathname = usePathname();
   // Running as the Quaddro WhatsApp module (src/lib/quaddro/config.ts).
   const quaddro = isQuaddroMode();
+  // Sections switched off for the Quaddro MVP (src/lib/quaddro/routing.ts).
+  const visibleNavItems = quaddro
+    ? navItems.filter((item) => !isQuaddroDisabledPage(item.href))
+    : navItems;
   const { profile, profileLoading, account, accountRole, signOut } = useAuth();
   const totalUnread = useTotalUnread();
   const unreadNotifications = useUnreadNotifications();
@@ -217,7 +222,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
         {/* Main navigation */}
         <nav className="flex-1 overflow-y-auto px-3 py-4">
           <ul className="flex flex-col gap-1">
-            {navItems.map((item) => {
+            {visibleNavItems.map((item) => {
               const isActive =
                 pathname === item.href ||
                 (item.href !== "/dashboard" && pathname.startsWith(item.href));
@@ -407,14 +412,19 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
                 <Settings className="size-4" />
                 {t("menuSettings")}
               </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-border" />
-              <DropdownMenuItem
-                onClick={signOut}
-                className="text-popover-foreground focus:bg-accent focus:text-accent-foreground"
-              >
-                <LogOut className="size-4" />
-                {t("menuSignOut")}
-              </DropdownMenuItem>
+              {/* The session belongs to Quaddro — leaving happens there. */}
+              {quaddro ? null : (
+                <>
+                  <DropdownMenuSeparator className="bg-border" />
+                  <DropdownMenuItem
+                    onClick={signOut}
+                    className="text-popover-foreground focus:bg-accent focus:text-accent-foreground"
+                  >
+                    <LogOut className="size-4" />
+                    {t("menuSignOut")}
+                  </DropdownMenuItem>
+                </>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
