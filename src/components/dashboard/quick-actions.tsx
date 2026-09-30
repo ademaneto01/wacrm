@@ -28,9 +28,12 @@ const ACTIONS: Action[] = [
 
 export function QuickActions() {
   const t = useTranslations('Dashboard.quickActions')
-  // Hide shortcuts into sections disabled for the Quaddro MVP.
+  // Hide shortcuts into sections disabled for the Quaddro MVP, and "New
+  // contact": contacts are Quaddro patients, created in Quaddro.
   const actions = isQuaddroMode()
-    ? ACTIONS.filter((a) => !isQuaddroDisabledPage(a.href))
+    ? ACTIONS.filter(
+        (a) => a.labelKey !== 'newContact' && !isQuaddroDisabledPage(a.href),
+      )
     : ACTIONS
 
   return (
