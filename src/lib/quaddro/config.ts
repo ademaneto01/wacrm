@@ -24,6 +24,15 @@ export function isQuaddroMode(): boolean {
   return quaddroAppUrl().length > 0
 }
 
+/**
+ * AI features (inbox draft button + hint, auto-reply banner, the AI
+ * agents section) are off for the Quaddro MVP. Flip this to bring them
+ * back.
+ */
+export function isAiEnabled(): boolean {
+  return !isQuaddroMode()
+}
+
 /** Absolute URL of a Quaddro panel page. */
 export function quaddroUrl(path: string): string {
   return `${quaddroAppUrl()}${path.startsWith('/') ? path : `/${path}`}`

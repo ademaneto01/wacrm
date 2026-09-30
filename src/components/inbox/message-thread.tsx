@@ -51,6 +51,7 @@ import {
 import { deleteAccountMedia } from "@/lib/storage/upload-media";
 import { TemplatePicker } from "./template-picker";
 import { AiThreadBanner } from "./ai-thread-banner";
+import { isAiEnabled } from "@/lib/quaddro/config";
 import { buildReplyPreview } from "./reply-quote";
 import { renderTemplateBody } from "@/lib/whatsapp/template-body";
 import { contactHandle } from "@/lib/whatsapp/wa-identity";
@@ -1162,7 +1163,8 @@ export function MessageThread({
 
       {/* AI auto-reply banner — take over an active bot, or resume it
           after a handoff. Renders nothing unless the account has
-          auto-reply configured. */}
+          auto-reply configured, nor while AI is off (isAiEnabled). */}
+      {isAiEnabled() && (
       <AiThreadBanner
         conversationId={conversation.id}
         disabled={conversation.ai_autoreply_disabled ?? false}
@@ -1175,6 +1177,7 @@ export function MessageThread({
           }
         }}
       />
+      )}
 
       {/* Composer */}
       <MessageComposer
