@@ -465,38 +465,40 @@ export function ContactDetailView({
 
             {/* Tabs */}
             <Tabs defaultValue="details" className="flex-1 flex flex-col min-h-0">
-              {/* Full width (not the default w-fit) with shrinkable triggers, so
-                  all five tabs stay inside the sheet on narrow widths. */}
-              <TabsList className="bg-muted/50 border-b border-border mx-4 mt-3 flex w-auto">
+              {/* Full width (not the default w-fit) and wrapping: on narrow
+                  widths the tabs flow onto a second row instead of spilling
+                  out of the sheet or truncating their labels. h-auto
+                  overrides the list's fixed h-8 so that row stays visible. */}
+              <TabsList className="bg-muted/50 border-b border-border mx-4 mt-3 flex w-auto flex-wrap group-data-horizontal/tabs:h-auto">
                 <TabsTrigger
                   value="details"
-                  className="min-w-0 data-active:bg-muted data-active:text-primary text-muted-foreground"
+                  className="h-7 flex-auto data-active:bg-muted data-active:text-primary text-muted-foreground"
                 >
-                  <span className="truncate">{t('tabs.details')}</span>
+                  {t('tabs.details')}
                 </TabsTrigger>
                 <TabsTrigger
                   value="tags"
-                  className="min-w-0 data-active:bg-muted data-active:text-primary text-muted-foreground"
+                  className="h-7 flex-auto data-active:bg-muted data-active:text-primary text-muted-foreground"
                 >
-                  <span className="truncate">{t('tabs.tags')}</span>
+                  {t('tabs.tags')}
                 </TabsTrigger>
                 <TabsTrigger
                   value="notes"
-                  className="min-w-0 data-active:bg-muted data-active:text-primary text-muted-foreground"
+                  className="h-7 flex-auto data-active:bg-muted data-active:text-primary text-muted-foreground"
                 >
-                  <span className="truncate">{t('tabs.notes')}</span>
+                  {t('tabs.notes')}
                 </TabsTrigger>
                 <TabsTrigger
                   value="custom"
-                  className="min-w-0 data-active:bg-muted data-active:text-primary text-muted-foreground"
+                  className="h-7 flex-auto data-active:bg-muted data-active:text-primary text-muted-foreground"
                 >
-                  <span className="truncate">{t('tabs.custom')}</span>
+                  {t('tabs.custom')}
                 </TabsTrigger>
                 <TabsTrigger
                   value="deals"
-                  className="min-w-0 data-active:bg-muted data-active:text-primary text-muted-foreground"
+                  className="h-7 flex-auto data-active:bg-muted data-active:text-primary text-muted-foreground"
                 >
-                  <span className="truncate">{t('tabs.deals')}</span>
+                  {t('tabs.deals')}
                 </TabsTrigger>
               </TabsList>
 
