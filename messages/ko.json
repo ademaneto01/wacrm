@@ -632,6 +632,7 @@
       "toastMoveOrDeleteDeals": "먼저 이 단계의 딜을 이동하거나 삭제하세요",
       "toastFailedDeleteStage": "단계를 삭제하지 못했습니다",
       "toastFailedDeletePipeline": "파이프라인을 삭제하지 못했습니다",
+      "toastNoPermissionDeletePipeline": "관리자만 파이프라인을 삭제할 수 있습니다",
       "toastDeleted": "파이프라인이 삭제되었습니다"
     },
     "analytics": {

@@ -632,6 +632,7 @@
       "toastMoveOrDeleteDeals": "Move or delete deals in this stage first",
       "toastFailedDeleteStage": "Failed to delete stage",
       "toastFailedDeletePipeline": "Failed to delete pipeline",
+      "toastNoPermissionDeletePipeline": "Only admins can delete pipelines",
       "toastDeleted": "Pipeline deleted"
     },
     "analytics": {

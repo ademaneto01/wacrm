@@ -185,13 +185,20 @@ export function PipelineSettings({
   async function handleDeletePipeline() {
     setDeleting(true);
     // ON DELETE CASCADE handles deals + stages.
-    const { error } = await supabase
+    // RLS-filtered deletes don't error, they just match zero rows — so
+    // ask for the deleted ids back to tell "deleted" from "not allowed".
+    const { data, error } = await supabase
       .from("pipelines")
       .delete()
-      .eq("id", pipeline.id);
+      .eq("id", pipeline.id)
+      .select("id");
     setDeleting(false);
     if (error) {
       toast.error(t("toastFailedDeletePipeline"));
+      return;
+    }
+    if (!data || data.length === 0) {
+      toast.error(t("toastNoPermissionDeletePipeline"));
       return;
     }
     onOpenChange(false);

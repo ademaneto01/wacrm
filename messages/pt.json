@@ -632,6 +632,7 @@
       "toastMoveOrDeleteDeals": "Mova ou exclua os negócios desta etapa primeiro",
       "toastFailedDeleteStage": "Falha ao excluir a etapa",
       "toastFailedDeletePipeline": "Falha ao excluir o pipeline",
+      "toastNoPermissionDeletePipeline": "Apenas administradores podem excluir pipelines",
       "toastDeleted": "Pipeline excluído"
     },
     "analytics": {

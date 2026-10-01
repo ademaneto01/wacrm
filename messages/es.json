@@ -632,6 +632,7 @@
       "toastMoveOrDeleteDeals": "Primero mueve o elimina los negocios de esta etapa",
       "toastFailedDeleteStage": "Error al eliminar la etapa",
       "toastFailedDeletePipeline": "Error al eliminar el pipeline",
+      "toastNoPermissionDeletePipeline": "Solo los administradores pueden eliminar pipelines",
       "toastDeleted": "Pipeline eliminado"
     },
     "analytics": {
